@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escape from Numbers</title>
+    <style>
+        /* CSS - STILE DEL GIOCO */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a2e;
+            color: #e94560;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        .container {
+            background-color: #16213e;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .hidden { display: none; }
+
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        p { line-height: 1.6; color: #fff; }
+
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        button:hover { background-color: #0f3460; border: 1px solid #e94560; }
+
+        input {
+            padding: 10px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            border: none;
+            width: 60%;
+            margin-top: 10px;
+        }
+
+        .vittoria-img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .loose-msg { color: #ff4d4d; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="page1" class="container">
+        <h1>ESCAPE FROM NUMBERS</h1>
+        <p>Benvenuto, agente. Sei intrappolato in un sistema digitale criptato. 
+        Per uscire dovrai hackerare il codice segreto generato dall'IA.</p>
+        <p>Hai solo 7 tentativi, o il sistema si bloccherà per sempre.</p>
+        <button onclick="showPage(2)">INIZIA LA FUGA</button>
+    </div>
+
+    <div id="page2" class="container hidden">
+        <h1>HACKING IN CORSO...</h1>
+        <p>Indovina il numero segreto tra 1 e 100:</p>
+        <input type="number" id="guessInput" placeholder="Inserisci numero...">
+        <br>
+        <button onclick="checkGuess()">INVIA CODICE</button>
+        <p id="feedback"></p>
+        <p>Tentativi rimasti: <span id="attempts">7</span></p>
+        <div id="looseScreen" class="hidden">
+            <h2 class="loose-msg">U LOOSE</h2>
+            <button onclick="restartGame()">RIPROVA</button>
+        </div>
+    </div>
+
+    <div id="page3" class="container hidden">
+        <h1>MISSIONE COMPIUTA!</h1>
+        <p>Hai decriptato il codice con successo. Il portale è aperto e sei libero.</p>
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=400&q=80" alt="Cyber Success" class="vittoria-img">
+        <br>
+        <button onclick="restartGame()">GIOCA ANCORA</button>
+    </div>
+
+    <script>
+        // LOGICA DEL GIOCO
+        let secretNumber;
+        let attemptsLeft;
+
+        function initGame() {
+            secretNumber = Math.floor(Math.random() * 100) + 1;
+            attemptsLeft = 7;
+            document.getElementById('attempts').innerText = attemptsLeft;
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('looseScreen').classList.add('hidden');
+            document.getElementById('guessInput').value = "";
+        }
+
+        function showPage(pageNum) {
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('page3').classList.add('hidden');
+            document.getElementById('page' + pageNum).classList.remove('hidden');
+            
+            if(pageNum === 2) initGame();
+        }
+
+        function checkGuess() {
+            const guess = parseInt(document.getElementById('guessInput').value);
+            const feedback = document.getElementById('feedback');
+
+            if (isNaN(guess)) {
+                feedback.innerText = "Inserisci un numero valido!";
+                return;
+            }
+
+            if (guess === secretNumber) {
+                showPage(3); // Vai alla pagina di vittoria
+            } else {
+                attemptsLeft--;
+                document.getElementById('attempts').innerText = attemptsLeft;
+
+                if (attemptsLeft <= 0) {
+                    document.getElementById('looseScreen').classList.remove('hidden');
+                    feedback.innerText = "SISTEMA BLOCCATO.";
+                } else if (guess < secretNumber) {
+                    feedback.innerText = "Il codice è più ALTO!";
+                } else {
+                    feedback.innerText = "Il codice è più BASSO!";
+                }
+            }
+        }
+
+        function restartGame() {
+            showPage(1);
+        }
+    </script>
+</body>
+</html>
